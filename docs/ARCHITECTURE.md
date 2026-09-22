@@ -58,6 +58,8 @@ flowchart TB
 
 **Version 0.1:** The JSON scenario is validated, a source-aware lexical control arm returns citations, synthetic agents are sampled by segment, and all arms share the same draw stream per run. Each agent can purchase one of multiple competing products or nothing. Peer ownership affects next-step utility. The output includes product counts, adoption trajectories, gross contribution, marketing cost, net contribution, paired effects and an illustrative cost estimate.
 
+The included SQLite BI reference ingests result JSON idempotently by scenario digest and exposes arm-level net contribution and paired effects. It rejects results labeled as anything other than synthetic. It demonstrates the result contract and repeatable reporting on one machine; it is not a distributed, continuously ingesting Iceberg implementation.
+
 **Intended data plane:** Each observed event should carry tenant, pseudonymous subject, event time, ingest time, consent purpose, source, product, event type and schema version. Exposure events also need candidate set, chosen order, policy version and selection propensity. Product snapshots need effective time, price, unit cost, inventory and eligibility. Iceberg snapshots should fix the data state used for backtests and support deletion propagation. No production data plane exists in this release.
 
 **Intended context plane:** Preserve document owner, license, valid time, source ID, content hash and citation span. A scenario compiler should present extracted assumptions and conflicting evidence for review before freezing a run. The current BM25 retrieval is a baseline; it does not infer facts, build a graph, or validate claims.
@@ -121,7 +123,7 @@ Only a segment-level heuristic ranking and a self-normalized inverse-propensity 
 
 ## Release gates
 
-1. **Reference engine:** deterministic replay, no-op arm exactly zero, bounded work, synthetic fixture, CI. Implemented.
+1. **Reference engine:** deterministic replay, no-op arm exactly zero, bounded work, synthetic fixture, local BI ingestion, CI. Implemented.
 2. **Evidence-grounded scenarios:** licensed-source ingestion, temporal cutoff, GraphRAG adapter, citation span tests and human assumption review.
 3. **Hybrid swarm:** versioned policy interface, Jev/LLM adapters, model-call budget, fallbacks, trace capture and comparison with deterministic control.
 4. **Observed-data validation:** consented datasets, point-in-time joins, time-split holdouts, calibration, naive and audience-twin baselines.

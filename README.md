@@ -10,6 +10,7 @@ It does **not** predict a real market, use live customer data, connect to Jev, b
 python3 -m audience_swarm_lab.cli simulate fixtures/offer-comparison.json --output /tmp/offer-result.json
 python3 -m audience_swarm_lab.cli rank fixtures/offer-comparison.json --segment budget
 python3 -m audience_swarm_lab.cli evaluate fixtures/logged-policy.json
+python3 -m audience_swarm_lab.cli warehouse /tmp/offer-result.json --db /tmp/audience-lab.sqlite
 python3 -m unittest discover -s tests -v
 ```
 
@@ -30,6 +31,7 @@ The optional cost meter estimates **$0.25688 per scenario** from the fixture's i
 | Matching | Eligibility-limited model-value ranking | Uncalibrated heuristic, no real uplift model |
 | Offline evaluation | Self-normalized inverse-propensity estimate | Requires valid logged propensities and overlap |
 | Unit economics | Work units and explicit assumed rates | Excludes external provider and review costs |
+| Continuous BI reference | Idempotent SQLite store for arm means and paired effects | Local analysis only; Iceberg is a future adapter |
 
 ## Architecture
 
@@ -42,6 +44,7 @@ flowchart LR
   E --> F[Adoption, margin and cost distributions]
   B --> G[Matching baseline]
   H[Logged randomized exposures] --> I[Offline policy evaluator]
+  F --> W[Local BI reference store]
   F -. proposed evidence adapter .-> J[Agent Trust Fabric]
   C -. proposed GraphRAG adapter .-> K[GraphRAG]
   G -. future online pilot .-> H

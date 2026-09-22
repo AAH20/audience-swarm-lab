@@ -1,12 +1,14 @@
 import copy
 import json
 import unittest
+import sqlite3
 from pathlib import Path
 
 from audience_swarm_lab.context import retrieve
 from audience_swarm_lab.contracts import validate
 from audience_swarm_lab.engine import simulate
 from audience_swarm_lab.matching import evaluate_logged_policy, rank_products
+from audience_swarm_lab.warehouse import ingest, report
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,6 +72,20 @@ class AudienceLabTests(unittest.TestCase):
         self.assertAlmostEqual(cost["direct"], cost["cpu"] + cost["graph_index"] + cost["storage_and_observability"])
         self.assertAlmostEqual(cost["with_operating_allowance"], cost["direct"] * 1.3)
         self.assertIn("excludes provider calls", cost["basis"])
+
+    def test_warehouse_ingestion_is_idempotent_and_labeled(self):
+        result = simulate(CASE)
+        with sqlite3.connect(":memory:") as connection:
+            ingest(connection, result)
+            ingest(connection, result)
+            rows = report(connection)
+            self.assertEqual(len(rows), 3)
+            self.assertIsNone(next(row for row in rows if row["arm_id"] == "baseline")["paired_net_effect"])
+            self.assertAlmostEqual(next(row for row in rows if row["arm_id"] == "pro-quality")["paired_net_effect"], result["paired_effects"]["pro-quality"]["net_contribution"]["mean"])
+            bad = copy.deepcopy(result)
+            bad["evidence_label"] = "ONLINE_EXPERIMENT"
+            with self.assertRaisesRegex(ValueError, "only labeled synthetic"):
+                ingest(connection, bad)
 
 
 if __name__ == "__main__":
