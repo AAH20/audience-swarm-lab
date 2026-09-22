@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1.0",
+  "scenario_id": "synthetic-two-product-offers",
+  "research_question": "How do price and quality affect adoption and contribution margin for productivity software?",
+  "population": 400,
+  "steps": 8,
+  "runs": 50,
+  "seed": 315,
+  "neighbors": 6,
+  "segments": [
+    {"id": "budget", "share": 0.5, "affinity": {"productivity": 0.6, "automation": 0.3}, "price_sensitivity": 1.4, "peer_influence": 0.7, "reservation": 0.4},
+    {"id": "quality", "share": 0.3, "affinity": {"productivity": 0.7, "automation": 0.8}, "price_sensitivity": 0.5, "peer_influence": 0.4, "reservation": 0.2},
+    {"id": "explorer", "share": 0.2, "affinity": {"productivity": 1.0, "automation": 0.9}, "price_sensitivity": 0.8, "peer_influence": 1.0, "reservation": 0.1}
+  ],
+  "products": [
+    {"id": "assist-basic", "category": "productivity", "price": 49, "unit_cost": 15, "quality": 0.65, "marketing": 0.1, "marketing_cost_per_step": 40},
+    {"id": "assist-pro", "category": "automation", "price": 89, "unit_cost": 28, "quality": 0.82, "marketing": 0.08, "marketing_cost_per_step": 30}
+  ],
+  "arms": [
+    {"id": "basic-discount", "start_step": 3, "product_id": "assist-basic", "changes": {"price": 39}},
+    {"id": "pro-quality", "start_step": 3, "product_id": "assist-pro", "changes": {"quality": 0.92, "marketing_cost_per_step": 55}}
+  ],
+  "documents": [
+    {"id": "demo-brief", "source": "synthetic://demo/product-brief", "license": "Synthetic demo content", "text": "The productivity software has a basic offer and an automation-focused pro offer. The research question compares pricing, quality, adoption and contribution margin."},
+    {"id": "demo-caveat", "source": "synthetic://demo/research-note", "license": "Synthetic demo content", "text": "Synthetic audience reactions are hypotheses. Real product recommendation lift requires logged exposures, known propensity and randomized experiments."}
+  ],
+  "economics": {"cpu_cost_per_million_agent_steps": 0.12, "graph_index_cost_per_scenario": 0.09, "storage_and_observability_cost": 0.05, "operating_allowance_fraction": 0.3}
+}

@@ -1,0 +1,9 @@
+{
+  "target_actions": {"budget": "assist-basic", "quality": "assist-pro"},
+  "records": [
+    {"context_id": "budget", "action": "assist-basic", "propensity": 0.5, "reward": 34},
+    {"context_id": "budget", "action": "assist-pro", "propensity": 0.5, "reward": 0},
+    {"context_id": "quality", "action": "assist-pro", "propensity": 0.5, "reward": 61},
+    {"context_id": "quality", "action": "assist-basic", "propensity": 0.5, "reward": 0}
+  ]
+}
