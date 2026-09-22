@@ -14,5 +14,6 @@ jobs:
           python-version: '3.11'
       - run: python -m unittest discover -s tests -v
       - run: python -m audience_swarm_lab.cli simulate fixtures/offer-comparison.json --output /tmp/offer-result.json
+      - run: python -m audience_swarm_lab.cli warehouse /tmp/offer-result.json --db /tmp/audience-lab.sqlite
       - run: python -m audience_swarm_lab.cli rank fixtures/offer-comparison.json --segment budget
       - run: python -m audience_swarm_lab.cli evaluate fixtures/logged-policy.json
